@@ -1,7 +1,7 @@
 name: curses
-version: 0.1.0
+version: 1.0.0
 description: Curses library for Praia
-author: Viggo
+author: Viggo Lekdorf
 license: MIT
 main: main.praia
 dependencies:
