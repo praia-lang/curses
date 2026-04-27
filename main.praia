@@ -9,7 +9,10 @@
 //   curses.endwin()
 
 let ext = ".dylib"
-if (sys.platform != "darwin") { ext = ".so" }
+if (sys.platform != "darwin") {
+    let arch = sys.exec(["uname", "-m"]).stdout.strip()
+    ext = "-linux-" + arch + ".so"
+}
 
 let _c = loadNative(path.dirname(sys.currentFile()) + "/plugins/curses" + ext)
 
