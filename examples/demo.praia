@@ -1,6 +1,11 @@
 #!/usr/bin/env praia
 use "../main" as curses
 
+let manifest = path.dirname(sys.currentFile()) + "/../grain.yaml"
+    |> sys.read
+    |> yaml.parse
+let version = manifest.version
+
 curses.initscr()
 
 // Title on stdscr
@@ -35,7 +40,7 @@ curses.addstr(win2, 5, 2, "Underlined")
 curses.attroff(win2, "underline")
 
 // Status bar
-let statusMsg = " praia-curses v0.1.0 | q = quit | arrows = move "
+let statusMsg = " praia-curses v" + version + " | q = quit | arrows = move "
 curses.attron("reverse")
 curses.addstr(curses.rows() - 1, 0, statusMsg)
 for (i in len(statusMsg)..curses.cols()) {
