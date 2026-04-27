@@ -1,0 +1,72 @@
+// curses — terminal UI library for Praia (wraps ncurses)
+//
+// Usage:
+//   use "curses"
+//   curses.initscr()
+//   curses.addstr(0, 0, "Hello!")
+//   curses.refresh()
+//   let key = curses.getch()
+//   curses.endwin()
+
+let ext = ".dylib"
+if (sys.platform != "darwin") { ext = ".so" }
+
+let _c = loadNative(path.dirname(sys.currentFile()) + "/plugins/curses" + ext)
+
+let initscr = _c.initscr
+let endwin = _c.endwin
+let rows = _c.rows
+let cols = _c.cols
+let move = _c.move
+let addstr = _c.addstr
+let refresh = _c.refresh
+let clear = _c.clear
+let erase = _c.erase
+let clrtoeol = _c.clrtoeol
+let addwstr = _c.addwstr
+let inch = _c.inch
+let addch = _c.addch
+let getch = _c.getch
+let nodelay = _c.nodelay
+let timeout = _c.timeout
+let attron = _c.attron
+let attroff = _c.attroff
+let attreset = _c.attreset
+let color = _c.color
+let colorpair = _c.colorpair
+let usepair = _c.usepair
+let cursor = _c.cursor
+let box = _c.box
+let hline = _c.hline
+let vline = _c.vline
+let newwin = _c.newwin
+let delwin = _c.delwin
+let mouseOn = _c.mouseOn
+let mouseOff = _c.mouseOff
+let getmouse = _c.getmouse
+let KEY_MOUSE = _c.KEY_MOUSE
+let napms = _c.napms
+let beep = _c.beep
+let flash = _c.flash
+let hasColors = _c.hasColors
+
+// Color constants
+let COLOR_BLACK = _c.COLOR_BLACK
+let COLOR_RED = _c.COLOR_RED
+let COLOR_GREEN = _c.COLOR_GREEN
+let COLOR_YELLOW = _c.COLOR_YELLOW
+let COLOR_BLUE = _c.COLOR_BLUE
+let COLOR_MAGENTA = _c.COLOR_MAGENTA
+let COLOR_CYAN = _c.COLOR_CYAN
+let COLOR_WHITE = _c.COLOR_WHITE
+
+export {
+    initscr, endwin, rows, cols, move, addstr, addwstr, inch, addch, refresh, clear, erase, clrtoeol,
+    getch, nodelay, timeout, attron, attroff, attreset,
+    color, colorpair, usepair, cursor,
+    box, hline, vline, newwin, delwin,
+    mouseOn, mouseOff, getmouse, KEY_MOUSE,
+    napms, beep, flash, hasColors,
+    COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_YELLOW,
+    COLOR_BLUE, COLOR_MAGENTA, COLOR_CYAN, COLOR_WHITE
+}

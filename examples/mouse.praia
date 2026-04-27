@@ -1,0 +1,119 @@
+#!/usr/bin/env praia
+use "../main" as curses
+
+curses.initscr()
+curses.mouseOn()
+curses.clear()
+
+// Title
+curses.attron("bold")
+curses.color("cyan")
+curses.addstr(0, 2, "Mouse Demo")
+curses.attreset()
+curses.addstr(1, 2, "Left-click to paint | Scroll to change color | q = quit")
+
+// Color palette
+let colors = ["red", "green", "yellow", "blue", "magenta", "cyan", "white"]
+let colorIdx = 0
+
+// Draw color indicator
+func drawColorBar() {
+    curses.move(2, 2)
+    curses.addstr("Color: ")
+    for (i in 0..len(colors)) {
+        curses.color(colors[i])
+        if (i == colorIdx) {
+            curses.attron("reverse")
+            curses.addstr(" " + colors[i] + " ")
+            curses.attroff("reverse")
+        } else {
+            curses.addstr(" " + colors[i] + " ")
+        }
+        curses.attreset()
+    }
+    curses.clrtoeol()
+}
+
+drawColorBar()
+
+// Status bar
+let statusRow = curses.rows() - 1
+func drawStatus(msg) {
+    curses.attron("reverse")
+    curses.addstr(statusRow, 0, msg.padEnd(curses.cols()))
+    curses.attroff("reverse")
+}
+drawStatus(" Ready")
+
+curses.cursor(false)
+curses.refresh()
+
+let running = true
+while (running) {
+    let key = curses.getch()
+
+    match (key) {
+        "q" { running = false }
+        "MOUSE" {
+            let ev = curses.getmouse()
+            if (ev) {
+                let x = ev.x
+                let y = ev.y
+                let btn = ev.button
+
+                // Only draw in the canvas area (below header, above status)
+                let inCanvas = y >= 4 && y < curses.rows() - 1
+
+                match (btn) {
+                    "LEFT_CLICK" {
+                        if (inCanvas) {
+                            curses.color(colors[colorIdx])
+                            curses.attron("bold")
+                            curses.addwstr(y, x, "\u{2588}")
+                            curses.attreset()
+                        }
+                        drawStatus(" Paint at (" + str(x) + ", " + str(y) + ") — " + colors[colorIdx])
+                        curses.refresh()
+                    }
+                    "LEFT_PRESS" {
+                        if (inCanvas) {
+                            curses.color(colors[colorIdx])
+                            curses.attron("bold")
+                            curses.addwstr(y, x, "\u{2588}")
+                            curses.attreset()
+                        }
+                        drawStatus(" Paint at (" + str(x) + ", " + str(y) + ") — " + colors[colorIdx])
+                        curses.refresh()
+                    }
+                    "SCROLL_UP" {
+                        colorIdx = (colorIdx + 1) % len(colors)
+                        drawColorBar()
+                        drawStatus(" Color: " + colors[colorIdx])
+                        curses.refresh()
+                    }
+                    "SCROLL_DOWN" {
+                        colorIdx = colorIdx - 1
+                        if (colorIdx < 0) { colorIdx = len(colors) - 1 }
+                        drawColorBar()
+                        drawStatus(" Color: " + colors[colorIdx])
+                        curses.refresh()
+                    }
+                    _ {
+                        drawStatus(" " + btn + " at (" + str(x) + ", " + str(y) + ")")
+                        curses.refresh()
+                    }
+                }
+            }
+        }
+        _ {
+            if (key) {
+                drawStatus(" Key: " + str(key))
+                curses.refresh()
+            }
+        }
+    }
+}
+
+curses.mouseOff()
+curses.endwin()
+print("Goodbye!")

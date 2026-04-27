@@ -1,0 +1,79 @@
+#!/usr/bin/env praia
+use "../main" as curses
+
+curses.initscr()
+
+// Title on stdscr
+curses.attron("bold")
+curses.color("cyan")
+curses.addstr(0, 2, "praia-curses demo (ncurses)")
+curses.attreset()
+
+// Draw a box using a window
+let win = curses.newwin(10, 40, 2, 2)
+curses.box(win)
+curses.addstr(win, 1, 2, "Arrow keys to move")
+curses.addstr(win, 2, 2, "Press 'q' to quit")
+curses.addstr(win, 4, 2, "Colors: ")
+curses.color(win, "red")
+curses.addstr(win, 4, 10, "Red ")
+curses.color(win, "green")
+curses.addstr(win, 4, 14, "Green ")
+curses.color(win, "blue")
+curses.addstr(win, 4, 20, "Blue")
+curses.attreset(win)
+
+// Second window
+let win2 = curses.newwin(10, 30, 2, 45)
+curses.box(win2)
+curses.addstr(win2, 1, 2, "Window 2")
+curses.attron(win2, "reverse")
+curses.addstr(win2, 3, 2, " Reverse text ")
+curses.attroff(win2, "reverse")
+curses.attron(win2, "underline")
+curses.addstr(win2, 5, 2, "Underlined")
+curses.attroff(win2, "underline")
+
+// Status bar
+let statusMsg = " praia-curses v0.1.0 | q = quit | arrows = move "
+curses.attron("reverse")
+curses.addstr(curses.rows() - 1, 0, statusMsg)
+for (i in len(statusMsg)..curses.cols()) {
+    curses.addstr(" ")
+}
+curses.attroff("reverse")
+
+curses.refresh()
+curses.refresh(win)
+curses.refresh(win2)
+
+// Show the real terminal cursor and move it around
+curses.cursor(true)
+let curRow = 13
+let curCol = 4
+curses.move(curRow, curCol)
+curses.refresh()
+
+let running = true
+while (running) {
+    let key = curses.getch()
+
+    match (key) {
+        "q"     { running = false }
+        "UP"    { if (curRow > 0) { curRow = curRow - 1 } }
+        "DOWN"  { if (curRow < curses.rows() - 2) { curRow = curRow + 1 } }
+        "LEFT"  { if (curCol > 0) { curCol = curCol - 1 } }
+        "RIGHT" { if (curCol < curses.cols() - 1) { curCol = curCol + 1 } }
+    }
+
+    // Move the hardware cursor
+    curses.move(curRow, curCol)
+
+    // Update position display
+    curses.addstr(win, 6, 2, "Pos: " + str(curRow) + ", " + str(curCol) + "     ")
+    curses.refresh(win)
+    curses.refresh()
+}
+
+curses.endwin()
+print("Goodbye!")
