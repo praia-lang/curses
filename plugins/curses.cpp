@@ -6,9 +6,25 @@
 #include <cstring>
 #include <unordered_map>
 
+PRAIA_DECLARE_ABI();
+PRAIA_PLUGIN_METADATA("curses", "0.2.0",
+                     "ncurses bindings for Praia");
+
 static std::unordered_map<int, WINDOW*> g_windows;
 static int g_nextWinId = 1;
 static bool g_initialized = false;
+
+// Process-exit hook — restore the terminal if user code didn't call
+// curses.endwin() before exit. Without this, a crashed or
+// sys.exit()-ing curses app leaves the terminal in raw mode with
+// the cursor hidden, which is awful to recover from manually.
+// endwin() is idempotent so calling it when already torn down is
+// safe; isendwin() is the documented "are we in curses mode?" check.
+extern "C" void praia_at_exit(void) {
+    if (g_initialized && !isendwin()) {
+        endwin();
+    }
+}
 
 static int registerWindow(WINDOW* win) {
     int id = g_nextWinId++;
