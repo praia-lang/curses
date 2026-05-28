@@ -1,7 +1,24 @@
 name: curses
-version: 1.1.1
+version: 1.2.0
 description: Curses library for Praia
 author: Viggo Lekdorf
 license: MIT
 main: main.praia
 dependencies:
+
+# Prebuilt native plugin binaries. Sand picks the entry matching
+# `sys.platform + "-" + uname -m` at install time, downloads the
+# binary, verifies the sha256, and drops it into plugins/ — so
+# main.praia's loadNative() finds it without a local toolchain.
+# Update the URLs + integrity hashes on every release. Recompute
+# with: shasum -a 256 plugins/<file> | awk '{print "sha256-" $1}'
+prebuilt:
+  darwin-arm64:
+    url: https://github.com/praia-lang/curses/releases/download/v1.2.0/curses.dylib
+    integrity: sha256-e14259d7ff3565e512d290976013a5b18619551ee490956fe2e8de896860635e
+  linux-x86_64:
+    url: https://github.com/praia-lang/curses/releases/download/v1.2.0/curses-linux-x86_64.so
+    integrity: sha256-dab31b13b92c8dc168348bfc1ddff5d7134e6dd1d284d1c83f222cc51176d823
+  linux-aarch64:
+    url: https://github.com/praia-lang/curses/releases/download/v1.2.0/curses-linux-aarch64.so
+    integrity: sha256-ffdff026288755733c7059dd4d7a5597d18f082c87991a804c0b8c920a3d7dc0
